@@ -42,6 +42,7 @@ $> kubectl create secret generic demo_api_tls --from-file=demo.pfx --namespace d
 ```
 ## How to install Ingress in kubernetes (power shell / bash)
 if the kubernetes already ingstall ingress please go to next step
+### Choice 1
 - command to add ingress to helm repo
 ```
 $> helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -96,7 +97,28 @@ Check Service
 ```
 $> kubectl get svc -n ingress-nginx
 ```
-
+### Choice 2
+- Install with Helm
+```
+$> helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+```
+- check pod status
+```
+$> kubectl get pods --namespace=ingress-nginx
+```
+- create demo pod to test
+```
+$> kubectl create deployment demo --image=nginx --port=80
+$> kubectl expose deployment demo
+```
+- create svc to test
+```
+$> kubectl create ingress demo-localhost --class=nginx --rule="demo.localdev.me/*=demo:80"
+```
+- forward port to test
+```
+$> kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
+```
 # How to install cert-manager(power shell / bash)
 - command to add cert-manager to helm repo
 ```

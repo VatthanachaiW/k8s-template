@@ -17,7 +17,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/language(/|$)(.*)"
+        path: "/api(/|$)(.*)"
         backend:
           service:
             name: <Service name>
