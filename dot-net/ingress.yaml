@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: <ingress name>
+  namespace: <Namespace>
+  labels:
+    app: <app tag>
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: letsencrypt-issuer #cert class for expose out side with cert-manager
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: <dns name>
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/language(/|$)(.*)"
+        backend:
+          service:
+            name: <Service name>
+            port: 
+              number: 443
+  tls:
+    - hosts:
+        - <dns name>
+      secretName: <tls-name for generate>

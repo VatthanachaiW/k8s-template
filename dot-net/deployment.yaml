@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deployment name>
+  namespace: <Namespace>
+  labels:
+    app: <app tag>
+spec:
+  selector:
+    matchLabels:
+      app: <deployment name>
+  template:
+    metadata:
+      labels:
+        app: <deployment name>
+    spec:
+      securityContext: # user and group id to execute docker image if specific user to execute
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+      - name: <deployment name>
+        image: <docker image with tag
+        imagePullPolicy: IfNotPresent # policy to download docker image
+        resources:  #limit to execute docker
+          limits:
+            memory: "256Mi"
+            cpu: "256m"
+        ports:
+        - containerPort: 443
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Production  #env
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            value: "" # cert password if required
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+            value: /secrets/tls-cert/reiven-tls-cert.pfx  # cert path to map
+          - name: ASPNETCORE_HTTPS_PORT
+            value: "443" # default port to expose if not specific in docker file
+        volumeMounts:
+          - name: <app setting volume mount name>
+            mountPath:  /app/appsettings.Production.json
+            subPath: appsettings.Production.json
+            readOnly: true
+          - name: <tls volume mount name>
+            mountPath: /secrets/tls-cert
+            readOnly: true
+      volumes:
+      - name: <app setting volume mount name>
+        secret:
+          secretName: <secret name>
+      - name: <tls volume mount name>
+        secret:
+          secretName: <tls secret name>
