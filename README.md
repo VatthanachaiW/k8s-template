@@ -1,4 +1,4 @@
-# k8s template
+# kubernetes template to work with SSL (HTTPS: port 443) 
 
 ## Required
 ### System
